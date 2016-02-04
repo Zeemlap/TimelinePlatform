@@ -264,9 +264,10 @@
 
 
         clone: function () {
-            var v = typeOfInteger.createInstanceUninitialized();
+            var v, thisa;
+            v = Object.create(Integer.prototype);
             v.__n = this.__n;
-            var thisa = this.__a;
+            thisa = this.__a;
             v.__a = thisa === null ? null : thisa.slice(0);
             return v;
         },
@@ -302,7 +303,7 @@
             return thisa[--t] - va[t];
         },
         equals: function (v) {
-            if (!(v instanceof Integer) || getType(v) !== typeOfInteger) {
+            if (v == null || Object.getPrototypeOf(v) !== Integer.prototype) {
                 return false;
             }
             return this.compareTo(v) === 0;
