@@ -1,0 +1,72 @@
+﻿@using TimelinePlatform.Web.UI.MvcViewPages
+@using TimelinePlatform.Web.Areas.Admin.Models
+@model UserViewModel
+@{
+    ViewBag.Title = Model.Name ?? "Create or Edit User";
+}
+@section headIncludes {
+    <style>
+        table.alternating-rows input {
+            box-sizing: content-box;
+            padding-left: 1px;
+            padding-right: 1px;
+        }
+
+        table.alternating-rows td:first-child {
+            width: 15em;
+        }
+
+        #form1 {
+            margin-bottom: 50em;
+        }
+
+        .field-label-enum-inline {
+            vertical-align: middle;
+        }
+
+        .field-input-enum-inline {
+            padding: 0;
+        }
+    </style>
+}
+@section headerButtons {
+    <button class="cancel-button">Cancel</button>
+    <button class="save-button">OK</button>
+}
+<form id="form1" action="@Html.AttributeEncode(Url.Action("CreateOrEdit"))" method="post" enctype="application/x-www-form-urlencoded">
+    
+    @this.AppHtml().FieldHidden( model => model.Id)
+    <table class="alternating-rows">
+        <tbody>
+            <tr>
+                @this.AppHtml().FieldTds(model => model.Name)
+                <td class="field-notes">
+                    @this.AppHtml().ModelErrorsForField(model => model.Name)
+                </td>
+            </tr>
+            <tr>
+                @this.AppHtml().FieldTds(model => model.EmailAddress)
+                <td class="field-notes">
+                    @this.AppHtml().ModelErrorsForField(model => model.EmailAddress)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    @this.AppHtml().ModelErrorsGeneric()
+</form>
+@section footerIncludes {
+    <div class="footer">
+        <button style="visibility: hidden; vertical-align: middle;">&nbsp;</button>
+        <div class="footer-shadow"></div>
+    </div>
+    <script>
+    $(".save-button").click(function (event) {
+        event.preventDefault();
+        $("#form1").submit();
+    });
+    $(".cancel-button").click(function (event) {
+        event.preventDefault();
+
+        location.href = "@Ajax.JavaScriptStringEncode(Url.Action("Index"))";
+    });</script>
+}

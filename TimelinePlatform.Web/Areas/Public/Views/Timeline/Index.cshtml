@@ -1,0 +1,103 @@
+﻿@using TimelinePlatform.Web.UI.MvcViewPages
+@using TimelinePlatform.Web.Areas.Public.Models
+@using System.Globalization
+@model TimelineIndexViewModel
+@{
+    ViewBag.Title = "Timelines";
+}
+
+@section headIncludes {
+<style>
+table.alternating-rows tbody tr {
+    cursor: pointer;
+}
+</style>   
+}
+@section headerButtons {
+    <button class="create-button">Create</button>
+}
+
+@this.AppHtml().DataGrid(model => model.Timelines, b =>
+{
+    b.BoundColumn(item => item.Id);
+    b.BoundColumn(item => item.Name);
+})
+
+@*<table class="alternating-rows">
+    <thead>
+        <tr>
+            <td>Title</td>
+            <td>Short description</td>
+            <td>Category</td>
+            <td>Publisher</td>
+            <td>Price</td>
+            <td>Actions</td>
+        </tr>
+    </thead>
+<tbody>
+    @foreach(var item in Model.Timelines)
+    {
+
+        <tr data-id="@Html.AttributeEncode(item.Id.ToString(NumberFormatInfo.InvariantInfo))"
+            data-category-id="@Html.AttributeEncode(item.CategoryId.ToString(NumberFormatInfo.InvariantInfo))">
+            <td class="title">@item.Title</td>
+            <td>@item.ShortDescr</td>
+            <td>@item.CategoryDisplayName</td>
+            <td><a href="@Html.AttributeEncode(@item.PublisherWebsite)">@item.PublisherName</a></td>
+            <td>@item.Price</td>
+            <td class="actions">
+                <button class="view-button">View</button>
+                <button class="edit-button">Edit</button>
+                <button class="delete-button">Delete</button>
+            </td>
+        </tr>
+    }
+</tbody>
+</table>*@
+    
+@section footerIncludes {
+  
+<script>
+    @*$(".delete-button").click(function (event) {
+        var $tr = $(this).parentsUntil("tbody").last();
+        var itemId = Number($tr.attr("data-id"));
+        var $titleTd = $tr.children("tr > td.title");
+        var title = $titleTd.text();
+        event.stopPropagation();
+        if (!confirm("Are you sure you want to delete the following challenge:\r\n" + title)) {
+            return;
+        }
+        location.href = "@Ajax.JavaScriptStringEncode(Url.Action("Delete", "Challenge"))?id=" + itemId;
+    });
+    $(".edit-button").click(function (event) {
+        var $tr = $(this).parentsUntil("tbody").last();
+        var itemId = Number($tr.attr("data-id"));
+        event.stopPropagation();
+        location.href = "@Ajax.JavaScriptStringEncode(Url.Action("CreateOrEdit", "Challenge"))?id=" + itemId;
+    });
+    $("table.alternating-rows tbody tr").mouseenter(function (event) {
+        $(this).addClass("hover");
+    }).mouseleave(function() {
+        $(this).removeClass("hover");
+    }).click(function () {
+        var url = "@Ajax.JavaScriptStringEncode(Url.Action("View", "Challenge"))";
+        url += "?id=" + Number($(this).attr("data-id"));
+        location.href = url;
+    });*@
+    $(".create-button").click(function (event) {
+        location.href = "@Ajax.JavaScriptStringEncode(Url.Action("CreateOrEdit"))";
+    });
+    @*(function() {
+        var highlightId = @Html.Raw(Model.HighlightSetId == null ? "null" : "\"" + ((long)Model.HighlightSetId).ToString(NumberFormatInfo.InvariantInfo) + "\"");
+        if (highlightId !== null) {
+            var $e = $("table tbody tr[data-id='" + highlightId + "'] td");
+            $e.animate({
+                backgroundColor: "blue"
+            }, 500, "swing", function() {
+                $e.css("backgroundColor", "");
+            });
+        }
+    })();*@
+</script>
+
+}

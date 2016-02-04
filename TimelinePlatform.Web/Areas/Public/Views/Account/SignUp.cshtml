@@ -1,0 +1,126 @@
+﻿@using TimelinePlatform.Web.UI.MvcViewPages
+@model TimelinePlatform.Web.Areas.Public.Models.SignUpViewModel
+
+@{
+    ViewBag.Title = "SignUp";
+}
+@section headerButtons {
+    <button class="cancel-button">Cancel</button>
+    <button class="save-button">OK</button>
+}
+<form id="register-form" method="post" action="@Html.AttributeEncode(Url.Action("SignUp", "Account"))">
+    @Html.AntiForgeryToken()
+    <table class="alternating-rows">
+        <tbody>
+            <tr>
+                @this.AppHtml().FieldTds(model => model.EmailAddress, null, true)
+                <td class="field-notes">
+                    @this.AppHtml().ModelErrorsForField(model => model.EmailAddress)
+                </td>
+            </tr>
+            <tr>
+                @this.AppHtml().FieldTds(model => model.Password1, null, true)
+                <td class="field-notes">
+                    <ul class="password-strength">
+                        @{ 
+
+                            var pwdStrTextId = WebEncodingUtilities.ToWebCompliantId(Guid.NewGuid().ToString("N"));
+                            var pwdStrLoadingInfoId = WebEncodingUtilities.ToWebCompliantId(Guid.NewGuid().ToString("N"));
+                            var pwdStrInnerBarId = WebEncodingUtilities.ToWebCompliantId(Guid.NewGuid().ToString("N"));
+                        }
+                        <li>
+                            Password strength: 
+                            <span id="@pwdStrTextId" style="display: inline-block; width: 5em;"></span>
+                            <span id="@pwdStrLoadingInfoId" style="position: absolute;"></span>
+                            <div style="height: 5px; width: 200px; background-color: #f5f5f5;">
+                                <div style="height: 100%;" id="@pwdStrInnerBarId"></div>
+                            </div>
+                        </li>
+                        <script>
+                            (function () {
+                                var uri = "@Ajax.JavaScriptStringEncode(Url.Action("PasswordStrength"))";
+                                var pwdInputElem = queryElements("#@this.AppHtml().FieldId(model => model.Password1)").single();
+                                var pwdStrTextElem = queryElements("#@pwdStrTextId").single();
+                                var pwdStrLoadingInfoElem = queryElements("#@pwdStrLoadingInfoId").single();
+                                var pwdStrInnerBarElem = queryElements("#@pwdStrInnerBarId").single();
+                                var pwdStrTextFromInt = [
+                                    "...", "weak", "fair", "good", "strong"
+                                ];
+                                var pwdStrColorFromInt = [
+                                    "", "#a03", "#fc3", "#2d98f3", "#76c261"
+                                ];
+                                pwdStrTextElem.innerText = pwdStrTextFromInt[0];
+                                var pwdStrReq = null;
+                                function f() {
+                                    if (pwdStrReq !== null) {
+                                        pwdStrReq.removeHandler("completed", f2);
+                                        pwdStrReq.abort();
+                                    } else {
+                                        pwdStrLoadingInfoElem.innerText = "Loading...";
+                                    }
+                                    pwdStrReq = new HttpRequest({
+                                        body: new HttpRequestFormBody().append("password", pwdInputElem.value),
+                                        uri: uri,
+                                        handlers: [
+                                            { eventName: "completed", func: f2 }
+                                        ]
+                                    });
+                                }
+                                function f2() {
+                                    var statusCode = pwdStrReq.getStatusCode();
+                                    var pwdStrInt;
+                                    if (statusCode < 200 || 300 <= statusCode) {
+                                        pwdStrInt = 0;
+                                    } else {
+                                        pwdStrInt = pwdStrReq.getResponse();
+                                    }
+                                    var pwdStrText = pwdStrTextFromInt[pwdStrInt];
+                                    pwdStrTextElem.innerText = pwdStrText;
+                                    if (pwdStrInt === 0) {
+                                        pwdStrInnerBarElem.style.width = "0";
+                                    } else {
+                                        pwdStrInnerBarElem.style.width = (pwdStrInt * 25) + "%";
+                                        pwdStrInnerBarElem.style.backgroundColor = pwdStrColorFromInt[pwdStrInt];
+                                    }
+                                    pwdStrReq = null;
+                                    pwdStrLoadingInfoElem.innerText = "";
+                                }
+                                pwdInputElem.addEventListener("input", f, false);
+                                if (0 < pwdInputElem.value.length) {
+                                    f();
+                                }
+                            })();
+                        </script>
+                    </ul>
+                    @if (this.AppHtml().HasModelErrorsForField(model => model.Password1))
+                    {
+                        <div style="height:0.5em;"></div>
+                        <text>
+                            @this.AppHtml().ModelErrorsForField(model => model.Password1)
+                        </text>
+                    }
+                </td>
+            </tr>
+            <tr>
+                @this.AppHtml().FieldTds(model => model.Password2, null, true)
+                <td class="field-notes">
+                    @this.AppHtml().ModelErrorsForField(model => model.Password2)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    @this.AppHtml().ModelErrorsGeneric()
+    <input type="submit" class="for-key-press-only">
+</form>
+@section footerIncludes {
+    <script>
+        (function () {
+            $(".save-button").click(function (event) {
+                $("#register-form").submit();
+            });
+            $(".cancel-button").click(function () {
+                history.back();
+            });
+        })();
+    </script>
+}

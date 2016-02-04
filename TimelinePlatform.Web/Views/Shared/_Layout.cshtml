@@ -1,0 +1,137 @@
+﻿@using TimelinePlatform.Web.UI.MvcViewPages
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <script src="~/Scripts/app/Base.js"></script>
+    <script src="~/Scripts/app/Host.js"></script>
+    <script src="~/Scripts/app/HostCss.js"></script>
+    <script src="~/Scripts/app/HostElement.js"></script>
+    <script src="~/Scripts/app/HostLocation.js"></script>
+    <script src="~/Scripts/app/HttpRequest.js"></script>
+    @RenderSection("headIncludes", required: false)
+</head>
+<body>
+    <script src="~/Scripts/app/Ieee754FloatingPointUtilities.js"></script>
+    <script src="~/Scripts/app/Integer.js"></script>
+    <script src="~/Scripts/app/List.js"></script>
+    <script src="~/Scripts/app/UI/UIElementAndInput.js"></script>
+    <script src="~/Scripts/app/UI/Button.js"></script>
+    <script src="~/Scripts/app/UI/Menu.js"></script>
+    <div class="header">
+        <div id="main-menu"></div>
+        <script>
+            var antiForgeryFormFieldName = "@Ajax.JavaScriptStringEncode(AppBla.AntiForgeryFormFieldName())";
+            var antiForgeryToken = "@Ajax.JavaScriptStringEncode(AppBla.AntiForgeryToken())";
+            function navigateTo(pathAndQuery) {
+                HostUtilities.fromHostContext(this).setLocation_pathAndQuery(pathAndQuery);
+            }
+            new Menu({
+                hostElement: queryElements("#main-menu").single(),
+                items: [
+                    {
+                        header: "Menu",
+                        items: [
+                            {
+                                header: "Home",
+                                command: function () { navigateTo("@Ajax.JavaScriptStringEncode(Url.Action("Index", "Home", new { area = "Public", }))"); }
+                            },
+                            {
+                                header: "Timelines",
+                                command: function () { navigateTo("@Ajax.JavaScriptStringEncode(Url.Action("Index", "Timeline", new { area = "Public", }))"); }
+                            }
+                            @if (Request.RequestContext.HttpContext.User.IsInRole(TimelinePlatform.Data.Role.AdminRoleName))
+                            {
+                                <text>,
+                                { type: "separator" },
+                                {
+                                    header: "Users",
+                                    command: function () {
+                                        navigateTo("@Ajax.JavaScriptStringEncode(Url.Action("Index", "User", new { area = "Admin", }))");
+                                    }
+                                },
+                                {
+                                    header: "Mail templates",
+                                    command: function () {
+                                        navigateTo("@Ajax.JavaScriptStringEncode(Url.Action("Index", "MailTemplates", new { area = "Admin", }))");
+                                    }
+                                }
+                                </text>
+                            },
+                            { type: "separator", }
+                            @if (Request.IsAuthenticated)
+                            {
+                                <text>,
+                                {
+                                    header: "Sign out",
+                                    command: function () {
+
+                                        new HttpRequest({
+                                            uri: "@Ajax.JavaScriptStringEncode(Url.Action("SignOut", "Account", new { area = "Public", }))",
+                                            body: new HttpRequestFormBody().append(antiForgeryFormFieldName, antiForgeryToken),
+                                            handlers: [
+                                                {
+                                                    eventName: "completed",
+                                                    func: function () {
+                                                        location.reload(true);
+                                                    }
+                                                }
+                                            ]
+                                        });
+                                    }
+                                }
+                                </text>
+                            }
+                            else
+                            {
+                                <text>,
+                                {
+                                    header: "Sign in",
+                                    command: function () {
+                                        navigateTo("@Ajax.JavaScriptStringEncode(Url.Action("SignIn", "Account", new { area = "Public", }))");
+                                    }
+                                },
+                                {
+                                    header: "Sign up",
+                                    command: function () {
+                                        navigateTo("@Ajax.JavaScriptStringEncode(Url.Action("SignUp", "Account", new { area = "Public", }))");
+                                    }
+                                }
+                                </text>
+                            }
+                            @if (this.IsDebug()) {
+                                <text>,
+                                { type: "separator" },
+                                {
+                                    header: "Test",
+                                    command: function () {
+                                        navigateTo("@Ajax.JavaScriptStringEncode(Url.Action("Test", "Home", new { area = "Public", }))")
+                                    }
+                                }
+                                </text>
+                            }
+                        ]
+                    }
+                ]
+            }).__setUIElementTree_parent(RootUIElement.getInstance());
+        </script>
+        <h2 style="display: inline-block;width: 20em;">@ViewBag.Title</h2>
+        <div class="button-bar">
+            @RenderSection("headerButtons")
+        </div>
+        <div class="header-shadow"></div>
+    </div>
+    @RenderBody()
+    @Scripts.Render("~/bundles/jquery")
+    @RenderSection("footerIncludes", required: false)
+
+    <script>
+        // add menu triggers...
+        $(".main-menu-button");
+    </script>
+</body>
+</html>

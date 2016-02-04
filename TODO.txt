@@ -1,0 +1,154 @@
+TODO
+	Organize code
+	
+		Currently most constructors accept an options object as a convenient way of initializing objects. As a 
+		consequence event handlers will be added during base class initialization. Any initialization after the 
+		base class initialization (this is most of the initialization) may therefore invoke handlers, but we are 
+		still in the constructor so we do not want to raise events. We do not want to write code in every
+		class specifically to solve this problem, since this is error-prone and results in duplication of logic.
+		The solution is to add handlers only after an object is instantiated. 
+		
+		This problem can neatly be encapsulated in the JSON-based mark-up language processor. This processor can 
+		simply use setters to initialize objects (perhaps using reflection) and can add event handlers thereafter.
+		There will be a significant performance improvement when instantiating UI elements from through invoking
+		the constructor directly, since this constructor no longer contains any option logic.
+			
+		Remove the isNotWithinConstructor from MenuItem or Menu.
+		Move all options to the mark-up processor.
+		
+		Split UIElementAndInput.js.
+		
+		
+	Implement layout system
+		Test whether requestAnimationFrame can be used to improve rendering performance.
+		UIElements should be markable as layout roots.
+		Each UI element that is a layout root has a layout request queue that is sorted by tree order.
+		Each UI element has a reference to its containing layout root to enable quick access to the layout request queue.
+		
+	ModalDialog
+		Use an overlay to implement a ModalDialog so we can detect when the user wants to interact with the 
+		background. If the user does this we either emphasize the ModalDialog (e.g. by blinking it similar to 
+		Microsoft Windows) or we confirm whether the user wants to cancel the current UI task (represented by 
+		this active ModalDialog).
+			The DOM element representing this overlay should have a fixed CSS position and the dialog's content
+			should be inside here.
+		There needs to be a layer manager that knows where to insert Popups in the DOM. This layer manager will 
+		solve problems like having Menus appear below a ModalDialog instead of on top of them.
+			Each UIElement root that is attached to the DOM (only RootUIElement and ModalDialog as of now) should 
+			manage its layers.
+		There should be a ModalDialog manager that ensures the last ModalDialog that was shown is on top (perhaps
+			by manipulating z-index properties rather than the DOM itself). Furthermore
+			any viewport scrolling should be disabled by this ModalDialog manager as long as a Modal Dialog is open.
+			There could be a maximized ModalDialog that is indistinguishable from viewport scrolling.
+		There should be a show animation where the ModalDialog grows, so that the user clearly sees that he or she 
+		can go back to what he or she was doing.
+		
+	JSON-based mark-up
+		Implement a JSON-based mark-up language that allows developers to easily define user interfaces.
+		This should be contained in a separate class that can perform instantiation and can detect invalid 
+		mark-up.
+		Some of this is already implemented in Menu.js and should be extracted from there.
+		
+	Data
+		Add client-side validation.
+		Add data-binding and client-side backend logic.
+	
+	Menu
+		Fix bug where __updateRole() is not called when the logical parent of a MenuItem changes.
+			We need logical parent change detection.
+			The class MenuItem should get a LogicalParent property that is either a Menu or MenuItem.
+		Update Menu and MenuItem so that Popup's are not UI element children, but only logical children.
+			Simplify mouse logic hereafter.
+		Ensure a MenuItem cannot be added to a UI element tree unless it has a Menu or MenuItem as logical parent.
+			We can only detect this when the tree is complete, thus we need to add detection for 
+			tree completion. Here tree completion means being added to the DOM.
+		Review this code in general.
+		Add code that enables scrolling through lists of MenuItems.
+			Move Popup code into a new Popup.js file or class and implement sizing logic here.
+			This code is similar to ModalDialog, where a UIElement is constrained by the viewport.
+				Make sure there is no duplicate code in the Popup and ModalDialog classes.
+		Add support for multiple mouses.
+		
+	Keyboard and accessibility
+		Add keyboard support to the Button class.
+			In particular support add support for the space and enter keys.
+			Consider why WPF's IsAccept and IsCancel properties are useful and how to implement them in 
+			JavaScript.
+		Add keyboard support to the Menu and MenuItem classes.
+			Test the usage of both the mouse and keyboard at the same time when navigating through a menu.
+		Add aria attributes to DOM elements.
+			A Button should have the role="button" attribute.
+			A MenuItem that has Role SubmenuItem or HeaderItem should have the role="button" attribute.
+			If a MenuItem is checkable and it's role is SubmenuItem or HeaderItem their should be an 
+			aria-isPressed attribute reflecting whether the MenuItem is checked on the appropriate DOM 
+			element.
+			Consider which other aria attributes can be added.
+			
+	Mouse
+		If a Menu is in menu mode, the mouse wheel (bubbling) event should be targeted on the UI element 
+		directly under the mouse. We should also prevent the browser from scrolling the viewport if a
+		mouse wheel event is handled by a scrollable MenuItem list (for example by calling preventDefault on the host 
+		mouse wheel event).
+		Consider how XButton1 and XButton2 can be supported in MSIE, if at all.
+		Complete implementation for MSIE.
+		Add elementFromPoint coordinate space feature detection by creating a Frame.
+			Run tests in an invisible Frame to avoid disruption of the user on the primary page.
+		Test whether we correctly modify the srcElement of host elements in MSIE when hovering over the text 
+		displayed by following element:
+			<input disabled type="text" value="asdf">
+		Consider using elementFromPoint to initially compute the directly over element.
+		Change mouse button identifiers to string names in the public API.
+		
+		When queueing mouse move events, any queued mousemove events, should be removed from the queue. 
+			This is only possible for reentrant updates of the mouse position.
+		When queueing mouse down and up events, any queued mouse up and down events, respectively, should 
+		be removed from the queue.
+			This is only possible for reentrant updates of the mouse position.
+		How do we detect mouse capture loss by opening context menus? 
+		How do we detect whether the context menu opened in a cross browser way?
+		In which ways can the scripting environment lose mouse capture?
+			For example in MSIE pressing the middle mouse button.
+		How do we prevent the context menu from opening through the keyboard?
+			In Chrome we can use preventDefault() onkeyup.
+		How do we prevent the context menu from opening through the mouse?
+			In Chrome perhaps we should call preventDefault on a click event.
+		How to detect mouse capture loss by dragging a selection (of text)?
+			In Chrome the dragstart event can be used.
+		Which mouse buttons cause mouse capture to be released?
+			In Chrome releasing any mouse button (outside the host client) causes the scripting environment 
+			to lose mouse capture. In MSIE this is just the left mouse button.
+		How can we disable user selection?
+		How can we reenable user selection in a subtree?
+		Is user selection actually disabled or is it just hidden?
+				
+	Dispatcher and events
+		Change the EventQueue architecture to use a Dispatcher.
+		The Dispatcher should perform any task scheduling and event queueing.
+			requestAnimFrame should be accessed by this Dispatcher class.
+		Updating the event architecture after considering each of the following goals:
+			1. Guard against raising events with invalid parameters.
+			2. Guard against raising a preview event without a corresponding bubble event.
+			3. Guard against raising PropertyChangedEvents when a property did not actually change.
+			4. Ensure instance event handlers are always created (empty if not present) to loosen coupling
+				between classes in the same family. We then avoid (for example) the problem of having to update
+				subclasses when adding instance handlers, since subclasses can now assume the base class has and
+				instance handler and can always call it.
+		Find optimization possibility by considering whether something like a NullEventExtensions singleton.
+		
+	Templates
+		Add support for Templates to UI elements to separate UI logic from presentation.
+		
+Viewport and coordinate spaces
+	The host client region is the outermost region of the page.
+	It contains the viewport and potentially a border (e.g. old MSIE versions have a border).
+	
+	The viewport has scrollbars for the entire document.
+		The documentElement and body are children of the viewport. Sometimes their properties actually 
+			reflect information of the viewport (e.g. in Chrome document.body.scrollLeft represents the 
+			viewport scroll rather than the body element scroll). 
+			
+		viewportContent
+			
+			htmlHtmlElement (represents nothing in IE quirks mode)
+				
+			bodyElement

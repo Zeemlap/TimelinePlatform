@@ -1,0 +1,251 @@
+﻿@section headIncludes {
+<style>
+.button {
+    cursor: default;
+    padding: 25px;
+    margin: 20px;
+    border: 1px solid rgb(173, 173, 173);
+    background-color: rgb(225, 225, 225);
+    color: black;
+    width: 200px;
+}
+.button.disabled {
+    background-color: rgb(204, 204, 204);
+    border-color: rgb(191, 191, 191);
+    color: black; /* This is not the correct value, the correct one is hard to obtain through paint, haha. */
+}
+.button.is-mouse-over {
+    border-color: rgb(0, 120, 215);
+    background-color: rgb(229, 241, 251);
+}
+.button.is-pressed {
+    border-color: rgb(0, 84, 153);
+    background-color: rgb(204, 228, 247);
+}
+body {
+    background-color: rgb(240, 240, 240);
+}
+</style>    
+}
+@section headerButtons {
+}
+
+<div id="button1" class="button">
+    Button 1
+</div>
+<div id="button2" class="button">
+    Button 2
+</div>
+<script>
+    (function () {
+        var button1HostElem = document.getElementById("button1");
+        HostUtilities.fromHostObject(button1HostElem).setIsHostElementSelectionDisabledWithinSubTree(button1HostElem, true);
+        var button1 = new Button(button1HostElem);
+        button1.__setUIElementTree_parent(RootUIElement.getInstance());
+        var button2HostElem = document.getElementById("button2");
+        HostUtilities.fromHostObject(button2HostElem).setIsHostElementSelectionDisabledWithinSubTree(button2HostElem, true);
+        var button2 = new Button(button2HostElem);
+        button2.__setUIElementTree_parent(RootUIElement.getInstance());
+    })();
+</script>
+<div id="testOneLineLR"><div></div><div></div><div></div><div></div><div class="right"><div></div><div></div><div></div><div></div></div></div>
+<style>
+    .window {
+        background-color: rgb(251, 251, 251);
+        padding: 1px;
+        box-shadow:  0 0 17px 0 rgba(0, 0, 0, 0.4);    
+        font-size: 13px;
+        line-height: 30px;
+    }
+    .window > .title-bar {
+        position: relative;
+        height: 30px;
+        cursor: default;
+        background-color: rgb(230, 230, 230);
+    }
+    .window > .title-bar > .title {
+        display: inline-block;
+        white-space: pre;
+        padding-left: 12px;    
+    }
+    .window > .title-bar > .right {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+    }
+    .window > .title-bar > .right > * {
+        display: inline-block;
+        width: 50px;
+        vertical-align: top;
+        text-align: center;
+        height: 100%;
+        position: relative;
+    }
+    .window > .title-bar > .right > *.is-mouse-over:not(.has-mouse-capture) {
+        background-color: rgb(206, 206, 206);
+    }
+    .window > .title-bar > .right > *.is-pressed {
+        background-color: rgb(184, 184, 184);
+    }
+    .help-button {
+        font-weight: bold;
+    }
+    .minimize-button { }
+    .minimize-button > div {
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        width: 10px;
+        height: 1px;
+        background-color: black;
+    }
+    .maximize-button > div {
+        position: absolute;
+        left: 20px;
+        top: 10px;
+        width: 8px;
+        height: 8px;
+        border: 1px solid black;
+    }
+    .restore-down-button > div {
+        position: absolute;
+        left: 20px;
+        top: 10px;
+        width: 10px;
+        height: 10px;
+    }
+    .restore-down-button > div > * {
+        position: absolute;
+        border: 1px solid black;
+    }
+    .restore-down-button > div > .bottom-left {
+        left: 0;
+        right: 2px;
+        bottom: 0;
+        top: 2px;
+    }
+    .restore-down-button > div > .top-right {
+        left: 2px;
+        top: 0;
+        right: 0;
+        height: 1px;
+        border-bottom-style: none;
+    }
+    .restore-down-button > div > .right {
+        right: 0;
+        top: 2px;
+        width: 1px;
+        border-left-style: none;
+        border-top-style: none;
+        bottom: 2px;
+    }
+    .close-button {}
+    .close-button svg {
+        position: absolute;
+        display: block;
+        left: 20px;
+        top: 10px;
+        width: 10px;
+        height: 10px;
+    }
+    .close-button path {
+        fill: none;
+        stroke: black;
+        stroke-width: 1.25px;
+    }
+    .window > .title-bar > .right > .close-button.is-mouse-over:not(.has-mouse-capture) {
+        background-color: rgb(232, 17, 35);
+    }
+    .window > .title-bar > .right > .close-button.is-mouse-over:not(.has-mouse-capture) path {
+        stroke: white;
+    }    
+    .window > .title-bar > .right > .close-button.is-pressed {
+        background-color: rgb(241, 112, 122);
+    }
+    .window > .title-bar > .right > .close-button.is-pressed path {
+        stroke: white;
+    }
+    .window > .content {
+        background-color: white;
+        padding: 5px;
+    }
+    #window1 {
+        max-width: 500px;
+        position: absolute;
+    }
+</style>
+<div class="window modal-dialog" id="window1">
+    <div class="title-bar">
+        <span class="title">Taskbar and Start Menu Properties</span>
+        <div class="right">
+            <div class="help-button">?</div>
+            <div class="minimize-button">
+                <div></div>
+            </div>
+            <div class="restore-down-button" style="display: none;">
+                <div>
+                    <div class="top-right"></div>
+                    <div class="bottom-left"></div>
+                    <div class="right"></div>
+                </div>
+            </div>
+            <div class="maximize-button">
+                <div></div>
+            </div>
+            <div class="close-button">
+                <svg>
+                    <path d="M0,0 L10,10 M0,10 L10,0"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        Asdf asdf
+    </div>
+    <script>
+        (function () {
+            var windowHostElem = document.getElementById("window1");
+            var titleBarHostElem = queryElements("#window1 > .title-bar", window1).single();
+            HostUtilities.fromHostElement(titleBarHostElem).setIsHostElementSelectionDisabledWithinSubTree(titleBarHostElem, true);
+            // var titleHostElem = queryElements(".title-bar > .title", titleBarHostElem).single();
+
+            var helpButtonHostElem = queryElements(".help-button", titleBarHostElem).single();
+            var closeButtonHostElem = queryElements(".close-button", titleBarHostElem).single();
+            var minimizeButtonHostElem = queryElements(".minimize-button", titleBarHostElem).single();
+            var maximizeButtonHostElem = queryElements(".maximize-button", titleBarHostElem).single();
+            var restoreDownButtonHostElem = queryElements(".restore-down-button", titleBarHostElem).single();
+            var helpButton = new Button(helpButtonHostElem);
+            var closeButton = new Button(closeButtonHostElem);
+            var minimizeButton = new Button(minimizeButtonHostElem);
+            var maximizeButton = new Button(maximizeButtonHostElem);
+            var restoreDownButton = new Button(restoreDownButtonHostElem);
+            closeButton.addHandler("click", function () {
+                windowHostElem.style.display = "none";
+            });
+            var windowMaxWidth = windowHostElem.offsetWidth;
+            hostObject_addHandler(window, "resize", function (e) {
+                var window_vpRect;
+                var vpSize;
+                var w;
+                var x;
+                vpSize = HostUtilities.fromHostContext(window).getSize_viewport();
+                window_vpRect = hostElement_getRect_viewport(window1);
+                w = vpSize.getX();
+                x = 0;
+                if (windowMaxWidth < w) {
+                    w = windowMaxWidth;
+                    x = (vpSize.getX() - windowMaxWidth) * 0.5;
+                }
+                windowHostElem.style.left = x + "px";
+                windowHostElem.style.width = w + "px";
+            });
+            var root = RootUIElement.getInstance();
+            helpButton.__setUIElementTree_parent(root);
+            helpButton.__setUIElementTree_parent(minimizeButton);
+            helpButton.__setUIElementTree_parent(restoreDownButton);
+            helpButton.__setUIElementTree_parent(maximizeButton);
+            helpButton.__setUIElementTree_parent(closeButton);
+        })();
+    </script>
+</div>

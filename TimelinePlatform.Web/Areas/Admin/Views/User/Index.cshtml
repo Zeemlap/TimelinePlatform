@@ -1,0 +1,82 @@
+﻿@using TimelinePlatform.Web
+@using TimelinePlatform.Web.UI.MvcViewPages
+@using TimelinePlatform.Web.Areas.Admin.Models
+@model IList<UserViewModel>
+@{
+    ViewBag.Title = "Users";
+}
+
+@section headIncludes { 
+}
+@section headerButtons {
+    <button class="create-button">Create</button>
+}
+
+
+<template id="command-column-template">
+    <td>
+        <button class="edit-button">Edit</button>
+        <button class="delete-button">Delete</button>
+    </td>
+</template>
+<script>
+    (function () {
+        function userToStringForNativeConfirmAndAlert(item) {
+            var s = "(" + item.Id + ", " + item.EmailAddress;
+            if (item.Name !== null) {
+                s +=  + ", " + item.Name;
+            }
+            s += ")";
+            return s;
+        }
+        function onCommandCellTemplateApplied(cell) {
+            var item = cell.getRow().getItem();
+            var deleteButton = queryElements(".delete-button", cell.getElement()).single();
+            deleteButton.addEventListener("click", function () {
+                if (!confirm("Are you sure you want to delete the following user?\n" +
+                    userToStringForNativeConfirmAndAlert(item))) {
+                    return;
+                }
+                var deleteHttpRequest = new HttpRequest({
+                    uri: "@Ajax.JavaScriptStringEncode(Url.Action("Delete"))",
+                    body: new HttpRequestFormBody().append("id", item.Id),
+                    handlers: [
+                        {
+                            eventName: "completed", func: function () {
+                                if (deleteHttpRequest.getIsSuccessStatusCode()) {
+                                    alert("Congratulations!\nThe following user was successfully deleted:\n" +
+                                        userToStringForNativeConfirmAndAlert(item));
+                                    location.reload();
+                                } else {
+                                    alert("Oops!\nAn error occured while deleting the following user:\n" +
+                                        userToStringForNativeConfirmAndAlert(item));
+                                }
+                            }
+                        }
+                    ]
+                });
+            }, false);
+        }
+
+        this.onCommandCellTemplateApplied = onCommandCellTemplateApplied;
+    })();
+</script>
+@this.AppHtml().DataGrid(
+    model => model,
+    b =>
+    {
+        b.BoundColumn(item => item.Id);
+        b.BoundColumn(item => item.Name);
+        b.BoundColumn(item => item.EmailAddress);
+        b.BoundColumn(item => item.CreationTimePoint);
+        b.TemplatedColumn("#command-column-template")
+            .DisplayNameShort("Commands")
+            .OnApplyTemplate("onCommandCellTemplateApplied");
+    })
+@section footerIncludes {
+<script>
+    $(".create-button").click(function () {
+        location.href = "@Ajax.JavaScriptStringEncode(Url.Action("CreateOrEdit"))";
+    });
+</script>
+}

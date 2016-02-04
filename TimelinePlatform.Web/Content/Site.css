@@ -1,0 +1,232 @@
+﻿html {
+    height: 100%;
+}
+body {
+    margin: 0;
+    font-size: 2em;
+    height: 100%;
+    padding-top: 94px;
+}
+body, button, input, textarea {
+    font-family: Arial;
+    font-size: 20px;
+}
+.header {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    top: 0;
+    background-color: white;
+}
+.header,
+.header > .button-bar,
+.footer,
+.footer > .button-bar {
+    padding: 0.5em 0;
+}
+.header > .button-bar,
+.footer > .button-bar {
+    position: absolute;
+    display: inline-block;
+    left: 35em;
+    top: 0;
+    bottom: 0;
+}
+.header > .button-bar > *,
+.footer > .button-bar > * {
+    vertical-align: middle;
+}
+#main-menu {
+    display: inline-block;
+    vertical-align: middle;
+}
+.header-shadow {
+    position: absolute;
+    left: -10px;
+    right: -10px;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    box-shadow: rgba(0, 0, 0, 0.25) 0 10px 10px;
+}
+.footer {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    background-color: white;
+}
+.footer-shadow {
+    left: -10px;
+    right: -10px;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    z-index: -1;
+    box-shadow: rgba(0, 0, 0, 0.25) 0 -10px 10px;
+}
+.header > h2,
+.footer > h2 {
+    vertical-align: middle;
+    padding: 0 0 0 1em;
+}
+h2, p { 
+    margin: 0; 
+    padding:0.5em;
+    line-height: 1;
+    font-weight: normal;
+}
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.alternating-rows td {
+    padding: 0.5em;
+    vertical-align: middle;
+}
+button {
+    cursor: default;
+}
+.alternating-rows tbody tr:nth-child(2n+1)  {
+    background-color: #ddd;
+}
+.alternating-rows tbody tr.hover:nth-child(2n+1) {
+    background-color: #bbb;
+}
+.alternating-rows tbody tr:nth-child(2n) {
+    background-color: #eee;
+}   
+.alternating-rows tbody tr.hover:nth-child(2n) {
+    background-color: #ccc;
+}
+.field-input-enum-inline {
+    padding-left: 0.5em;
+}
+
+.field-input-enum-inline > label {
+    display: inline-block;
+    padding: 0.35em;
+    font-weight: normal;
+    border-radius: 24px;
+    border: 0.15em solid #bbb;
+    background-color: #bbb;
+    cursor: pointer;
+    margin-right: 0.15em;
+}
+.field-input-enum-inline > label:hover {
+    border-color: #999;
+}
+.field-input-enum-inline > label > input[type=radio] {
+    display: none;
+}
+.field-input-enum-inline > label.is-selected {
+    background-color: #999;
+    border-color: #999;
+}
+.field-input-enum-inline > label.is-selected:hover {
+    border-color: #777;
+}
+
+.elastic-text-area {
+    box-sizing: content-box;
+    resize: none;
+}
+
+.error-message-list {
+    color: red;
+}
+
+.field-notes > .error-message-list,
+.password-strength {
+    padding: 0;
+    margin: 0;
+}
+.field-notes > .error-message-list > li {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+}
+.field-notes > .error-message-list > li:last-child {
+    margin-bottom: 0;
+}
+
+
+.button-bar {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+input.for-key-press-only[type=submit] {
+    visibility: hidden;
+    position: absolute;
+}
+
+.menu { }
+.menu > .menu-item {
+    color: black;
+}
+.menu-item-list-outer {
+    position: absolute;
+}
+.menu-item-list-shadow {
+    position: absolute;
+    top: 10px;
+    bottom: 0;
+    left: 10px;
+    right: 0;
+    box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.8);
+}
+.menu-item-list-inner {
+    position: relative;
+    border: 1px solid rgb(160, 160, 160);
+    font-size: 12px;
+    font-weight: normal;
+    color: #ddd;
+    background-color: rgb(43, 43, 43);
+    padding: 8px 2px;
+}
+.menu-item {
+    position: relative;
+    height: 32px;
+    padding-right: 32px;
+    line-height: 32px;
+    color: white;
+}
+.menu-item > .menu-item-check {
+    visibility: hidden;
+    padding-left: 32px;
+    background-image: url(menu-item-check.png);
+}
+.menu-item.is-checkable.is-checked > .menu-item-check {
+    visibility: visible;
+}
+.menu-item > .menu-item-arrow {
+    content: ">";
+    visibility: hidden;
+    text-align: center;
+    width: 32px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+.menu-item.top-level-item > .menu-item-arrow ,
+.menu-item.submenu-item > .menu-item-arrow {
+    visibility: visible;
+}
+.menu-item.is-highlighted {
+    background-color: rgb(65, 65, 65);
+}
+#main-menu > .menu-item.is-highlighted {
+    background-color: #eee;
+}
+.menu-item.is-highlighted > .menu-item-check {
+    background-image: url(menu-item-check-is-highlighted.png);
+}
+.separator {
+    padding: 4px 10px;
+}
+.separator > div {
+    height: 1px;
+    background-color: rgb(128, 128, 128);
+}

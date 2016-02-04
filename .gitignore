@@ -1,0 +1,11 @@
+packages/
+.vs/
+TimelinePlatform.Data/bin/
+TimelinePlatform.Data/obj/
+TimelinePlatform.Test/bin/
+TimelinePlatform.Test/obj/
+TimelinePlatform.Utilities/bin/
+TimelinePlatform.Utilities/obj/
+TimelinePlatform.Web/bin/
+TimelinePlatform.Web/obj/
+TimelinePlatform.Web/TimelinePlatform.Web.csproj.user

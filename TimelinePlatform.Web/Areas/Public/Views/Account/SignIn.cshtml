@@ -1,0 +1,64 @@
+﻿@using TimelinePlatform.Web.UI.MvcViewPages
+@model TimelinePlatform.Web.Areas.Public.Models.SignInViewModel
+@{
+    ViewBag.Title = "Sign in";
+}
+@section headerButtons {
+    <button class="cancel-button">Cancel</button>
+    <button class="save-button">OK</button>
+}
+
+<form id="sign-in-form"
+      action="@Html.AttributeEncode(Url.Action("SignIn", "Account", new { returnUrl = ViewBag.ReturnUrl, }))"
+      method="post">
+    @Html.AntiForgeryToken()
+    <table class="alternating-rows">
+        <tbody>
+            <tr>
+                @this.AppHtml().FieldTds(model => model.EmailAddressOrUsername, null, true)
+                <td class="field-notes">
+                    @this.AppHtml().ModelErrorsForField(model => model.EmailAddressOrUsername)
+                </td>
+            </tr>
+            <tr>
+                @this.AppHtml().FieldTds(model => model.Password, null, true)
+                <td class="field-notes">
+                    @this.AppHtml().ModelErrorsForField(model => model.Password)
+                </td>
+            </tr>
+            <tr>
+                @this.AppHtml().FieldTds(model => model.RememberMe, true, true)
+                <td class="field-notes">
+                    @this.AppHtml().ModelErrorsForField(model => model.RememberMe)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    @this.AppHtml().ModelErrorsGeneric()
+    <input type="submit" class="for-key-press-only" tabindex="-1" />
+    @*<p>
+            @Html.ActionLink("Sign up as a new user", "SignUp")
+        </p>
+        Enable this once you have account confirmation enabled for password reset functionality
+            <p>
+                @Html.ActionLink("Forgot your password?", "ForgotPassword")
+            </p>*@
+</form>
+
+
+@section footerIncludes {
+    <script>
+        (function () {
+            $(".save-button").click(function (event) {
+                $("#sign-in-form").submit();
+            });
+            $(".cancel-button").click(function () {
+                history.back();
+            });
+        })();
+    </script>   
+} 
+
+@*<section id="socialLoginForm">
+    @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+</section>*@
