@@ -2,50 +2,26 @@
                     
     var SUBMENU_SHOW_HIDE_DELAY = 400;
     var undefined;
+    var hasOwnPropertyFunction = Object.prototype.hasOwnProperty;
     var menu_packedData_isInMenuMode_mask = 0x0000001;
     var menu_packedData_shouldOpenOnMouseEnter_mask = 0x0000002;
 
     // This implementation is incompatible with multiple mouses, although supported by the input and UIElement API.
 
-    function Menu(options) {
-        var optionNames, i, n, baseOptions;
-        var items, items_isSet = false;
-        this.__menu_items = null;
-        this.__menu_panel = new Panel();
+    var menu_baseTypeName = "UIElement";
+    var menu_baseTypeCtor = window[menu_baseTypeName];
+    var menu_baseTypeProto = menu_baseTypeCtor.prototype;
+
+    function __Menu() {
         this.__menu_hostElem = null;
-        this.__menu_currentSelection = null;
-        this.__menu_packedData = 0;
-        if (1 <= arguments.length) {
-            optionNames = Object.getOwnPropertyNames(options);
-            n = optionNames.length;
-            for (i = 0; i < n; i++) {
-                switch (optionNames[i]) {
-                    case "hostElement":
-                        this.__menu_hostElem = options.hostElement;
-                        if (!isHostElement(this.__menu_hostElem)) throw Error();
-                        break;
-                    case "items":
-                        items = options.items;
-                        items_isSet = true;
-                        break;
-                    default:
-                        if (baseOptions === undefined) baseOptions = {};
-                        baseOptions[optionNames[i]] = options[optionNames[i]];
-                        break;
-                }
-            }
-        }
-        if (this.__menu_hostElem === null) throw Error();
-        hostElement_cssClasses_addRange(this.__menu_hostElem, "menu");
-        if (baseOptions === undefined) UIElement.call(this);
-        else UIElement.call(this, baseOptions);
-        this.__menu_panel.__setUIElementTree_parent(this);
-        if (items_isSet) {
-            menuOrMenuItem_createAndAppendCommonMenuItems_fromCommonMenuItemOptionList(this, items);
-        }
+        this.__initCommon();
     }
-    Menu.prototype = setOwnSrcPropsOnDst({
-        __getCurrentSelection: function() {
+    function Menu(hostElem) {
+        this.__initHostElem(hostElem);
+        this.__initCommon();
+    }
+    Menu.prototype = __Menu.prototype = setOwnSrcPropsOnDst({
+        __getCurrentSelection: function () {
             return this.__menu_currentSelection;
         },
         __getHasItems: function() {
@@ -82,6 +58,18 @@
                 return;
             }
             this.__setIsInMenuMode(false);
+        },
+        __initCommon: function () {
+            this.__menu_items = null;
+            this.__menu_panel = new Panel();
+            this.__menu_currentSelection = null;
+            this.__menu_packedData = 0;
+            menu_baseTypeCtor.call(this);
+            this.__menu_panel.__setUIElementTree_parent(this);
+        },
+        __initHostElem: function(hostElem) {
+            this.__menu_hostElem = hostElem;
+            hostElement_cssClasses_addRange(this.__menu_hostElem, "menu");
         },
         _onClick: function (e) {
             var r, e_src;
@@ -202,7 +190,21 @@
         __uiElementTree_appendReversedChildrenToArray: function (array) {
             array[array.length] = this.__menu_panel;
         }
-    }, Object.create(UIElement.prototype));
+    }, Object.create(menu_baseTypeProto));
+
+    
+    var getOptionOnce = JsonMarkup.getOptionOnce;
+    var SENTINEL = __menuItemRole_isValid;
+    JsonMarkup.__addType("Menu", __Menu, menu_baseTypeName, function (instance, options) {
+        var i;
+        if (!isHostElement(i = getOptionOnce(options, "hostElement"))) throw Error();
+        instance.__initHostElem(i);
+        if ((i = getOptionOnce(options, "items", SENTINEL)) !== SENTINEL) {
+            menuOrMenuItem_createAndAppendCommonMenuItems_fromCommonMenuItemOptionList(instance, i);
+        }
+    });
+
+
 
     var menuItemRole_topLevelItem = 0;
     var menuItemRole_topLevelHeader = 1;
@@ -231,17 +233,18 @@
     var menuItem_packedData_hasOwner_mask = 0x0000002;
     var menuItem_packedData_isCheckable_mask = 0x0000004;
     var menuItem_packedData_isChecked_mask = 0x0000008;
-    var menuItem_packedData_isNotWithinConstructor_mask = 0x0000010;
+    var menuItem_packedData_shouldStayOpenOnClick_mask = 0x000010;
     var menuItem_packedData_isSelected_mask = 0x0000020;
     var menuItem_packedData_isHighlighted_mask = 0x0000040;
     var menuItem_packedData_isPressed_mask = 0x0000080;
-    var menuItem_packedData_shouldStayOpenOnClick_mask = 0x0000100;
-    var menuItem_packedData_role_offset = 9;
+    var menuItem_packedData_role_offset = 8;
     var menuItem_packedData_role_mask = menuItemRole_mask << menuItem_packedData_role_offset;
-                                
-    function MenuItem(options) {
-        var baseOptions, optionNames, i, n;
-        var command, items, items_isSet;
+                      
+    var menuItem_baseTypeName = "UIElement";
+    var menuItem_baseTypeCtor = window[menuItem_baseTypeName];
+    var menuItem_baseTypeProto = menuItem_baseTypeCtor.prototype;
+
+    function MenuItem() {
         this.__menuItem_packedData = 0;
         this.__menuItem_items = null;
         this.__menuItem_header = null;
@@ -255,48 +258,7 @@
         this.__menuItem_openSubmenuIfThisRoleTypeIsHeader_timeoutId = null;
         this.__menuItem_closeSubmenu_timeoutFunc = null;
         this.__menuItem_closeSubmenu_timeoutId = null;
-        if (1 <= arguments.length) {
-            optionNames = Object.getOwnPropertyNames(options);
-            i = 0;
-            n = optionNames.length;
-            for (; i < n; i++) {
-                switch (optionNames[i]) {
-                    case "header":
-                        this.setHeader(options.header);
-                        break;
-                    case "command":
-                        command = options.command;
-                        if (!isFunction(command)) throw Error();
-                        break;
-                    case "isCheckable":
-                        this.setIsCheckable(options.isCheckable);
-                        break;
-                    case "isChecked":
-                        this.setIsChecked(options.isChecked);
-                        break;
-                    case "items":
-                        items = options.items;
-                        items_isSet = true;
-                        break;
-                    case "shouldStayOpenOnClick":
-                        this.setShouldStayOpenOnClick(options.shouldStayOpenOnClick);
-                        break;
-                    default:
-                        if (baseOptions === undefined) baseOptions = {};
-                        baseOptions[optionNames[i]] = options[optionNames[i]];
-                        break;
-                }
-            }
-        }
-        if (baseOptions !== undefined) UIElement.call(this, baseOptions);
-        else UIElement.call(this);
-        if (command !== undefined) {
-            this.addHandler("click", command);
-        }
-        if (items_isSet) {
-            menuOrMenuItem_createAndAppendCommonMenuItems_fromCommonMenuItemOptionList(this, items);
-        }
-        this.__menuItem_packedData |= menuItem_packedData_isNotWithinConstructor_mask;
+        menuItem_baseTypeCtor.call(this);
     }
     MenuItem.prototype = setOwnSrcPropsOnDst({
         __clickHeader: function () {
@@ -371,9 +333,6 @@
         },
         getIsHighlighted: function() {
             return (this.__menuItem_packedData & menuItem_packedData_isHighlighted_mask) !== 0;
-        },
-        __getIsNotWithinConstructor: function() {
-            return (this.__menuItem_packedData & menuItem_packedData_isNotWithinConstructor_mask) !== 0;
         },
         getIsPressed: function() {
             return (this.__menuItem_packedData & menuItem_packedData_isPressed_mask) !== 0;
@@ -699,6 +658,7 @@
         },
         __onPropertyChanged: function (e) {
             var i;
+            menuItem_baseTypeProto.__onPropertyChanged.call(this, e);
             i = this.__menuItem_hostElemMenuItem;
             switch (e.getPropertyName()) {
                 case "isCheckable":
@@ -793,9 +753,7 @@
             if (this.__menuItem_hostElemMenuItemHeader !== null) {
                 this.__menuItem_hostElemMenuItemHeader.innerText = (value === null ? "" : value);
             }
-            if (this.__getIsNotWithinConstructor()) {
-                this.raiseEvent("propertyChanged", new PropertyChangedEventArgs("header", oldValue, value));
-            }
+            this.raiseEvent("propertyChanged", new PropertyChangedEventArgs("header", oldValue, value));
         },
         setIsCheckable: function (value) {
             if (this.getIsCheckable() === value) return;
@@ -803,9 +761,7 @@
             this.__menuItem_packedData = value
                 ? (this.__menuItem_packedData | menuItem_packedData_isCheckable_mask)
                 : (this.__menuItem_packedData & ~menuItem_packedData_isCheckable_mask);
-            if (this.__getIsNotWithinConstructor()) {
-                this.raiseEvent("propertyChanged", new PropertyChangedEventArgs("isCheckable", !value, value));
-            }
+            this.raiseEvent("propertyChanged", new PropertyChangedEventArgs("isCheckable", !value, value));
         },
         setIsChecked: function (value) {
             if (this.getIsChecked() === value) return;
@@ -813,9 +769,7 @@
             this.__menuItem_packedData = value
                 ? (this.__menuItem_packedData | menuItem_packedData_isChecked_mask)
                 : (this.__menuItem_packedData & ~menuItem_packedData_isChecked_mask);
-            if (this.__getIsNotWithinConstructor()) {
-                this.raiseEvent("propertyChanged", new PropertyChangedEventArgs("isChecked", !value, value));
-            }
+            this.raiseEvent("propertyChanged", new PropertyChangedEventArgs("isChecked", !value, value));
         },
         __setIsHighlighted: function (value) {
             if (this.getIsHighlighted() === value) return;
@@ -900,7 +854,6 @@
             role2 = this.__getRole();
             if (role2 === role1) return;
             this.__menuItem_packedData = (this.__menuItem_packedData & ~menuItem_packedData_role_mask) | (role1 << menuItem_packedData_role_offset);
-            if (!this.__getIsNotWithinConstructor()) return;
             i = this.__menuItem_hostElemMenuItem;
             if (i !== null) {
                 hostElement_cssClasses_removeRange(i, menuItem_roleToCssClass[role2]);
@@ -981,27 +934,30 @@
             heSubmenu.style.top = v.getY() + "px";
 
         }
-    }, Object.create(UIElement.prototype));
+    }, Object.create(menuItem_baseTypeProto));
+    JsonMarkup.__addType("MenuItem", MenuItem, menuItem_baseTypeName, function (instance, options) {
 
-    function Separator(options) {
-        var baseOptions, optionNames, i, n;
-        if (1 <= arguments.length) {
-            optionNames = Object.getOwnPropertyNames(options);
-            i = 0;
-            n = optionNames.length;
-            for (; i < n; i++) {
-                switch (optionNames[i]) {
-                    default:
-                        if (baseOptions === undefined) baseOptions = {};
-                        baseOptions[optionNames[i]] = options[optionNames[i]];
-                        break;
-                }
-            }
+        var i;
+        if ((i = getOptionOnce(options, "header", SENTINEL)) !== SENTINEL) instance.setHeader(i);
+        if ((i = getOptionOnce(options, "isCheckable", SENTINEL)) !== SENTINEL) instance.setIsCheckable(i);
+        if ((i = getOptionOnce(options, "isChecked", SENTINEL)) !== SENTINEL) instance.setIsChecked(i);
+        if ((i = getOptionOnce(options, "shouldStayOpenOnClick", SENTINEL)) !== SENTINEL) instance.setShouldStayOpenOnClick(i);
+        if ((i = getOptionOnce(options, "items", SENTINEL)) !== SENTINEL) {
+            menuOrMenuItem_createAndAppendCommonMenuItems_fromCommonMenuItemOptionList(instance, i);
         }
+    }, function (instance, options) {
+        var i;
+        if ((i = getOptionOnce(options, "command", SENTINEL)) !== SENTINEL) {
+            if (!isFunction(i)) throw Error();
+            instance.addHandler("click", i);
+        }
+
+    });
+
+    function Separator() {
         this.__separator_hostElem = null;
         this.__separator_hasOwner = false;
-        if (baseOptions !== undefined) UIElement.call(this, baseOptions);
-        else UIElement.call(this);
+        UIElement.call(this);
     }
     Separator.prototype = setOwnSrcPropsOnDst({
         __getHostElem: function () {
@@ -1012,8 +968,9 @@
             return this.__separator_hostElem;
         }
     }, UIElement.prototype);
+    JsonMarkup.__addType("Separator", Separator, "UIElement");
 
-    function isValidCommonMenuItem(value) {
+    function commonMenuItem_isValid(value) {
         if (value instanceof MenuItem) {
             return !value.__getHasOwner();
         }
@@ -1021,20 +978,6 @@
             return !value.__separator_hasOwner;
         }
         return false;
-    }
-
-    function commonMenuItem_createFromOptions(options) {
-        var optionsWithoutType;
-        var type, i, n;
-        type = getOwnProperty(options, "type", "menuItem");
-        if (type !== "menuItem" && type !== "separator") throw Error();
-        optionsWithoutType = setOwnSrcPropsOnDst(options, {});
-        delete optionsWithoutType.type;
-        if (type === "menuItem") {
-            return new MenuItem(optionsWithoutType);
-        } else {
-            return new Separator(optionsWithoutType);
-        }
     }
 
     function commonMenuItem_getHostElement(item) {
@@ -1046,6 +989,7 @@
             throw Error();
         }
     }
+
     function menuOrMenuItem_getShouldIgnoreMouseEvents(menuOrMenuItem) {
         return false;
     }
@@ -1082,12 +1026,40 @@
         }
     }
 
+    JsonMarkup.__addType("__CommonMenuItem", null, null, function (options) {
+        var key;
+        var aliasedTypeName;
+        for (key in options) if (hasOwnPropertyFunction.call(options, key)) {
+            switch (key) {
+                case "header":
+                case "command":
+                case "isCheckable":
+                case "isChecked":
+                case "items":
+                case "shouldStayOpenOnClick":
+                    aliasedTypeName = "MenuItem";
+                    break;
+                // add cases for which to use separator
+            }
+        }
+        if (aliasedTypeName === undefined) {
+            aliasedTypeName = "Separator";
+        }
+        return aliasedTypeName;
+    }, null, true);
+
     function menuOrMenuItem_createAndAppendCommonMenuItems_fromCommonMenuItemOptionList(menuOrMenuItem, commonMenuItemOptionList) {
         var i, n;
         var commonMenuItem;
+        var commonMenuItemOption;
         if (!isArrayLike_nonSparse(commonMenuItemOptionList)) throw Error();
         for (i = 0, n = commonMenuItemOptionList.length; i < n; i++) {
-            commonMenuItem = commonMenuItem_createFromOptions(commonMenuItemOptionList[i]);
+            commonMenuItemOption = commonMenuItemOptionList[i];
+            if (isObject(commonMenuItemOption) && hasOwnPropertyFunction.call(commonMenuItemOption, "type")) {
+                commonMenuItem = JsonMarkup.convertToObject(commonMenuItemOption);
+            } else {
+                commonMenuItem = JsonMarkup.convertToObject(commonMenuItemOption, "__CommonMenuItem");
+            }
             menuOrMenuItem.getItems().add(commonMenuItem);
         }
     }
@@ -1104,7 +1076,7 @@
 
     function CommonMenuItemList() {
         List.call(this, {
-            isItemValid: isValidCommonMenuItem,
+            isItemValid: commonMenuItem_isValid,
             canUseResetListChangeType: false
         });
     }
@@ -1125,6 +1097,9 @@
             }
         }
     }, Object.create(List.prototype));
+
+
+
 
     setOwnSrcPropsOnDst({
         Menu: Menu,

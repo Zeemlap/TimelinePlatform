@@ -49,8 +49,7 @@
     function DoubleUtilities() {
         throw Error();
     }
-    DoubleUtilities.prototype = __DoubleUtilities.prototype = Object.create(Ieee754FloatingPointUtilities.prototype);
-    setOwnSrcPropsOnDst({
+    DoubleUtilities.prototype = __DoubleUtilities.prototype = setOwnSrcPropsOnDst({
         create: function (exponent, mantissa, isNegative) {
             var expMin;
             var expMax;
@@ -119,7 +118,7 @@
             }
             return e;
         }
-    }, DoubleUtilities.prototype);
+    }, Object.create(Ieee754FloatingPointUtilities.prototype));
 
     var doubleUtilities = new __DoubleUtilities();
     DoubleUtilities.getInstance = function () { return doubleUtilities; };

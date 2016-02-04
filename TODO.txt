@@ -1,23 +1,6 @@
 TODO
 	Organize code
-	
-		Currently most constructors accept an options object as a convenient way of initializing objects. As a 
-		consequence event handlers will be added during base class initialization. Any initialization after the 
-		base class initialization (this is most of the initialization) may therefore invoke handlers, but we are 
-		still in the constructor so we do not want to raise events. We do not want to write code in every
-		class specifically to solve this problem, since this is error-prone and results in duplication of logic.
-		The solution is to add handlers only after an object is instantiated. 
-		
-		This problem can neatly be encapsulated in the JSON-based mark-up language processor. This processor can 
-		simply use setters to initialize objects (perhaps using reflection) and can add event handlers thereafter.
-		There will be a significant performance improvement when instantiating UI elements from through invoking
-		the constructor directly, since this constructor no longer contains any option logic.
-			
-		Remove the isNotWithinConstructor from MenuItem or Menu.
-		Move all options to the mark-up processor.
-		
 		Split UIElementAndInput.js.
-		
 		
 	Implement layout system
 		Test whether requestAnimationFrame can be used to improve rendering performance.
@@ -68,6 +51,7 @@ TODO
 			This code is similar to ModalDialog, where a UIElement is constrained by the viewport.
 				Make sure there is no duplicate code in the Popup and ModalDialog classes.
 		Add support for multiple mouses.
+		Implement real commands and add support for disabled items.
 		
 	Keyboard and accessibility
 		Add keyboard support to the Button class.
@@ -137,6 +121,12 @@ TODO
 		
 	Templates
 		Add support for Templates to UI elements to separate UI logic from presentation.
+		
+	HttpRequest
+		Add Uri validation.
+	JsonMarkup
+		Add rename different kinds of JsonMarkupTypes.
+		
 		
 Viewport and coordinate spaces
 	The host client region is the outermost region of the page.

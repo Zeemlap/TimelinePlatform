@@ -37,9 +37,13 @@
                     userToStringForNativeConfirmAndAlert(item))) {
                     return;
                 }
-                var deleteHttpRequest = new HttpRequest({
+
+                var deleteHttpRequest = JsonMarkup.convertToObject({
+                    type: "HttpRequest",
                     uri: "@Ajax.JavaScriptStringEncode(Url.Action("Delete"))",
-                    body: new HttpRequestFormBody().append("id", item.Id),
+                    content: {
+                        id: item.Id + ""
+                    },
                     handlers: [
                         {
                             eventName: "completed", func: function () {

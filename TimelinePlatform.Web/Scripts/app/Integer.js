@@ -63,8 +63,7 @@
         return n & digMax;
     }
 
-    function __Integer() {
-    }
+    function __Integer() {}
     function Integer(v) {
         if (arguments.length < 1) {
             this.__n = 0;
@@ -113,7 +112,7 @@
     var string_fromCharCode = String.fromCharCode;
 
 
-    Integer.prototype = __Integer.prototype = {
+    Integer.prototype = __Integer.prototype = setOwnSrcPropsOnDst({
         add: function (v) {
             throw Error();
         },
@@ -265,7 +264,7 @@
 
         clone: function () {
             var v, thisa;
-            v = Object.create(Integer.prototype);
+            v = new __Integer();
             v.__n = this.__n;
             thisa = this.__a;
             v.__a = thisa === null ? null : thisa.slice(0);
@@ -587,7 +586,9 @@
         valueOf: function () {
             return this.toNumber("bankers");
         }
-    };
+    }, Object.create(ValueType.prototype));
 
-    this.Integer = Integer;
+    setOwnSrcPropsOnDst({
+        Integer: Integer
+    }, window);
 })();

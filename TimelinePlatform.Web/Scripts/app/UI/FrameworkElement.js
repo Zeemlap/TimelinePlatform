@@ -51,10 +51,11 @@
     assert(fe_packedData1_unused_offset <= 31);
     var fe_packedData1_unused_mask = 0x7FFFFFFF - ((1 << fe_packedData1_unused_offset) - 1);
 
-    var fe_baseTypeCtor = UIElement;
+    var fe_baseTypeName = "UIElement";
+    var fe_baseTypeCtor = window[fe_baseTypeName];
     var fe_baseTypeProto = fe_baseTypeCtor.prototype;
 
-    function FrameworkElement(options) {
+    function FrameworkElement() {
         this.__fe_height = nan;
         this.__fe_maxHeight = posInf;
         this.__fe_maxWidth = posInf;
@@ -213,7 +214,19 @@
         }
 
     }, Object.create(fe_baseTypeProto));
-
+    var getOptionOnce = JsonMarkup.getOptionOnce;
+    var SENTINEL = horizAlign_toString
+    JsonMarkup.__addType("FrameworkElement", FrameworkElement, fe_baseTypeName, function (instance, options) {
+        var i;
+        if ((i = getOptionOnce(instance, "height", SENTINEL)) !== SENTINEL) instance.setHeight(i);
+        if ((i = getOptionOnce(instance, "horizontalAlignment", SENTINEL)) !== SENTINEL) instance.setHorizontalAlignment(i);
+        if ((i = getOptionOnce(instance, "maxHeight", SENTINEL)) !== SENTINEL) instance.setMaxHeight(i);
+        if ((i = getOptionOnce(instance, "maxWidth", SENTINEL)) !== SENTINEL) instance.setMaxWidth(i);
+        if ((i = getOptionOnce(instance, "minHeight", SENTINEL)) !== SENTINEL) instance.setMinHeight(i);
+        if ((i = getOptionOnce(instance, "minWidth", SENTINEL)) !== SENTINEL) instance.setMinWidth(i);
+        if ((i = getOptionOnce(instance, "verticalAlignment", SENTINEL)) !== SENTINEL) instance.setVerticalAlignment(i);
+        if ((i = getOptionOnce(instance, "width", SENTINEL)) !== SENTINEL) instance.setWidth(i);
+    });
 
 
     setOwnSrcPropsOnDst({

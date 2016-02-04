@@ -554,6 +554,7 @@
         uri_queryString_toPojo: uri_queryString_toPojo,
         uri_getAuthority: uri_getAuthority,
 
+        ValueType: ValueType,
         Vector2: Vector2
     }, window);
 
@@ -911,39 +912,12 @@
         }
     };
     var objectWithEvents_nextId = 0;
-    function ObjectWithEvents(options) {
+    function ObjectWithEvents() {
         // The largest decrementable double is also the largest non-incrementable double.
         if (objectWithEvents_nextId === largestDecrementableIntegralDouble) throw Error();
         this.__objectWithEvents_id = objectWithEvents_nextId++;
         this.__objectWithEvents_userHandlers = {};
         this.__objectWithEvents_internalHandlers = {};
-        if (arguments.length < 1) return;
-        var optionNames, i, n;
-        var handlers, j, o;
-        optionNames = Object.getOwnPropertyNames(options);
-        n = optionNames.length;
-        for (i = 0; i < n; i++) {
-            switch (optionNames[i]) {
-                case "handlers":
-                    handlers = options.handlers;
-                    if (!isArrayLike_nonSparse(handlers)) throw Error();
-                    o = handlers.length;
-                    for (j = 0; j < o; j++) {
-                        this.addHandler(handlers[j]);
-                    }
-                    break;
-                case "__handlers":
-                    handlers = options.__handlers;
-                    if (!isArrayLike_nonSparse(handlers)) throw Error();
-                    o = handlers.length;
-                    for (j = 0; j < o; j++) {
-                        this.__addHandler(handlers[j]);
-                    }
-                    break;
-                default:
-                    throw Error();
-            }
-        }
     }
     ObjectWithEvents.prototype = {
         addHandler: function (eventName, func, thisp) {

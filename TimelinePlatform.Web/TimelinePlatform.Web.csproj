@@ -249,17 +249,19 @@
     <Content Include="Areas\Public\Views\web.config" />
     <Content Include="Areas\Public\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Public\Views\Home\Test.cshtml" />
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\app\AsyncOperations.js" />
     <Content Include="Scripts\app\Base.js" />
     <Content Include="Scripts\app\Ieee754FloatingPointUtilities.js" />
+    <Content Include="Scripts\app\JsonMarkup.js" />
     <Content Include="Scripts\app\List.js" />
     <Content Include="Scripts\app\HostCss.js" />
     <Content Include="Scripts\app\HostLocation.js" />
     <Content Include="Scripts\app\HostElement.js" />
     <Content Include="Scripts\app\UI\FrameworkElement.js" />
+    <Content Include="Scripts\app\UI\Input.js" />
     <Content Include="Scripts\app\UI\Panels.js" />
-    <Content Include="Scripts\app\UI\UIElementAndInput.js" />
+    <Content Include="Scripts\app\UI\UIElement.js" />
+    <Content Include="Scripts\app\UI\HostInput.js" />
     <Content Include="Scripts\app\UI\Button.js" />
     <Content Include="Scripts\app\Host.js" />
     <Content Include="Scripts\app\UI\Menu.js" />
@@ -267,20 +269,6 @@
     <Content Include="Scripts\app\DateTimeFormatting.js" />
     <Content Include="Scripts\app\HttpRequest.js" />
     <Content Include="Scripts\app\Integer.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.color-2.1.2.js" />
-    <Content Include="Scripts\jquery.color-2.1.2.min.js" />
-    <Content Include="Scripts\jquery.color.svg-names-2.1.2.js" />
-    <Content Include="Scripts\jquery.color.svg-names-2.1.2.min.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -300,7 +288,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TimelinePlatform.Data\TimelinePlatform.Data.csproj">

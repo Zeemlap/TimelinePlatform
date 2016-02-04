@@ -13,12 +13,17 @@
         resetUserPassword: function (userId) {
             asyncOperationManager.httpRequest(
                 "Admin/User/ResetPassword",
-                new HttpRequestFormBody().append("id", userId + ""),
+                new HttpFormContent().append("id", userId + ""),
                 behaviorIfInProgress_useOldest
             );
         }
 
     };
+
+
+    function __httpContentEquals(x1, x2) {
+        return x1 === x2;
+    }
 
 
 
@@ -28,7 +33,7 @@
         this.__httpRequestsFromUri = {};
     }
     AsyncOperationManager.prototype = {
-        httpRequest: function (uri, body, behaviorIfInProgress) {
+        httpRequest: function (uri, content, behaviorIfInProgress) {
             switch (behaviorIfInProgress) {
                 case behaviorIfInProgress_useOldest:
                     break;
@@ -43,7 +48,7 @@
                 i = 0;
                 n = httpRequests.length;
                 do {
-                    if (bodyEquals(body, httpRequests[i].getBody())) {
+                    if (__httpContentEquals(content, httpRequests[i].getContent())) {
                         httpRequest = httpRequests[i];
                         break;
                     }
@@ -51,11 +56,9 @@
             }
             var createHttpRequest = httpRequest === null;
             if (createHttpRequest) {
-                httpRequest = new HttpRequest({
-                    body: body,
-                    uri: uri,
-                    autoSend: false
-                });
+                httpRequest = new HttpRequest();
+                httpRequest.setContent(content);
+                httpRequest.setUri(uri);
             }
             httpRequest.addHandler("completed", function () { }, this);
             if (createHttpRequest) {
@@ -80,12 +83,6 @@
 
     }
     AsyncOperation.prototype = {
-        _raiseStartedEvent: function () {
-            throw Error();
-        },
-        _raiseCompletedEvent: function () {
-            throw Error(); // not implemented
-        }
     };
 
 

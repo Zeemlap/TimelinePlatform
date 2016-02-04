@@ -58,8 +58,11 @@
                                     } else {
                                         pwdStrLoadingInfoElem.innerText = "Loading...";
                                     }
-                                    pwdStrReq = new HttpRequest({
-                                        body: new HttpRequestFormBody().append("password", pwdInputElem.value),
+                                    pwdStrReq = JsonMarkup.convertToObject({
+                                        type: "HttpRequest",
+                                        content: {
+                                            password: pwdInputElem.value
+                                        },
                                         uri: uri,
                                         handlers: [
                                             { eventName: "completed", func: f2 }
