@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
     <script src="~/Scripts/app/Base.js"></script>
     <script src="~/Scripts/app/Host.js"></script>
     <script src="~/Scripts/app/HostCss.js"></script>
     <script src="~/Scripts/app/HostElement.js"></script>
     <script src="~/Scripts/app/HostLocation.js"></script>
+    <script src="~/Scripts/app/JsonMarkup.js"></script>
     <script src="~/Scripts/app/HttpRequest.js"></script>
     @RenderSection("headIncludes", required: false)
 </head>
@@ -19,7 +19,10 @@
     <script src="~/Scripts/app/Ieee754FloatingPointUtilities.js"></script>
     <script src="~/Scripts/app/Integer.js"></script>
     <script src="~/Scripts/app/List.js"></script>
-    <script src="~/Scripts/app/UI/UIElementAndInput.js"></script>
+    <script src="~/Scripts/app/UI/UIElement.js"></script>
+    <script src="~/Scripts/app/UI/Input.js"></script>
+    <script src="~/Scripts/app/UI/FrameworkElement.js"></script>
+    <script src="~/Scripts/app/UI/HostInput.js"></script>
     <script src="~/Scripts/app/UI/Button.js"></script>
     <script src="~/Scripts/app/UI/Menu.js"></script>
     <div class="header">
@@ -70,9 +73,12 @@
                                     header: "Sign out",
                                     command: function () {
 
-                                        new HttpRequest({
+                                        JsonMarkup.convertToObject({
+                                            type: "HttpRequest",
                                             uri: "@Ajax.JavaScriptStringEncode(Url.Action("SignOut", "Account", new { area = "Public", }))",
-                                            body: new HttpRequestFormBody().append(antiForgeryFormFieldName, antiForgeryToken),
+                                            content: [
+                                                { key: antiForgeryFormFieldName, value: antiForgeryToken }
+                                            ],
                                             handlers: [
                                                 {
                                                     eventName: "completed",
@@ -126,12 +132,6 @@
         <div class="header-shadow"></div>
     </div>
     @RenderBody()
-    @Scripts.Render("~/bundles/jquery")
     @RenderSection("footerIncludes", required: false)
-
-    <script>
-        // add menu triggers...
-        $(".main-menu-button");
-    </script>
 </body>
 </html>
